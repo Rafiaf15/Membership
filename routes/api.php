@@ -1,9 +1,12 @@
 <?php
 
-use Illuminate\Http\Request;
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ActivityRuleController;
 use App\Http\Controllers\Api\RewardController;
+use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\StatementController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -15,9 +18,18 @@ use App\Http\Controllers\Api\RewardController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware(['jwt.auth'])->group(function () {
+    // Auth
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/me', [AuthController::class, 'me']);
+    
+    // Statement & Points
+    Route::get('/statement', [StatementController::class, 'index']);
+    Route::get('/statement/export-pdf', [StatementController::class, 'exportPdf']);
+    Route::get('/points/balance', [StatementController::class, 'balance']);
 });
 
 Route::apiResource('activity-rules', ActivityRuleController::class)->except(['show']);
