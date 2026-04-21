@@ -1,13 +1,12 @@
 <?php
 
-
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\RewardProcessingController;
 use App\Http\Controllers\Api\ActivityRuleController;
 use App\Http\Controllers\Api\MembershipController;
 use App\Http\Controllers\Api\RewardController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\StatementController;
-
 
 /*
 |--------------------------------------------------------------------------
@@ -26,13 +25,14 @@ Route::middleware(['jwt.auth'])->group(function () {
     // Auth
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
-    
+
     // Statement & Points
     Route::get('/statement', [StatementController::class, 'index']);
     Route::get('/statement/export-pdf', [StatementController::class, 'exportPdf']);
     Route::get('/points/balance', [StatementController::class, 'balance']);
 });
 
+// Modul 1 & 4 Routes
 Route::apiResource('activity-rules', ActivityRuleController::class)->except(['show']);
 Route::apiResource('rewards', RewardController::class)->except(['show']);
 Route::post('rewards/{reward}/decrement-stock', [RewardController::class, 'decrementStock']);
@@ -49,3 +49,30 @@ Route::post('membership/referrals/apply', [MembershipController::class, 'applyRe
 
 Route::post('membership/activity/trigger', [MembershipController::class, 'triggerActivity']);
 Route::post('membership/rewards/{reward}/redeem', [MembershipController::class, 'redeemReward']);
+
+// Modul 2 - Reward Processing Routes
+Route::prefix('rewards')->group(function () {
+    // Add points automatically
+    Route::post('/add-points', [RewardProcessingController::class, 'addPoints'])
+        ->name('rewards.add');
+
+    // Redeem points
+    Route::post('/redeem', [RewardProcessingController::class, 'redeemPoints'])
+        ->name('rewards.redeem');
+
+    // Get balance
+    Route::get('/balance/{userId}', [RewardProcessingController::class, 'getBalance'])
+        ->name('rewards.balance');
+
+    // Validate balance
+    Route::post('/validate-balance', [RewardProcessingController::class, 'validateBalance'])
+        ->name('rewards.validate');
+
+    // Get user point logs
+    Route::get('/logs/{userId}', [RewardProcessingController::class, 'getLogs'])
+        ->name('rewards.logs');
+
+    // Get all logs with filters
+    Route::get('/all-logs', [RewardProcessingController::class, 'getAllLogs'])
+        ->name('rewards.all-logs');
+});

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -18,11 +19,13 @@ class User extends Authenticatable implements JWTSubject
         'name',
         'email',
         'password',
+        'membership_tier',
         'points_balance',
         'points',
         'membership_tier_id',
         'referral_code',
         'referred_by_user_id',
+        'point_multiplier',
     ];
 
     protected $hidden = [
@@ -34,6 +37,38 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    /**
+     * Get the PointBalance for the user
+     */
+    public function pointBalance(): HasOne
+    {
+        return $this->hasOne(PointBalance::class);
+    }
+
+    /**
+     * Get PointLog records for the user
+     */
+    public function pointLogs(): HasMany
+    {
+        return $this->hasMany(PointLog::class);
+    }
+
+    /**
+     * Get referral records where this user is the referrer
+     */
+    public function referrals(): HasMany
+    {
+        return $this->hasMany(Referral::class, 'referred_by_user_id');
+    }
+
+    /**
+     * Get the user who referred this user
+     */
+    public function referredBy()
+    {
+        return $this->belongsTo(User::class, 'referred_by_user_id');
+    }
 
     public function rewardRedemptions(): HasMany
     {
@@ -79,8 +114,6 @@ class User extends Authenticatable implements JWTSubject
             ->sum('points_earned');
     }
 
-    #MODUL4
-
     public function membershipTier(): BelongsTo
     {
         return $this->belongsTo(MembershipTier::class);
@@ -95,5 +128,4 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(User::class, 'referred_by_user_id');
     }
-    #END MODUL 4
 }

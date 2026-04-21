@@ -1,9 +1,7 @@
 {
-    "name": "laravel/laravel",
+    "name": "team9/loyalty-rewards",
+    "description": "Point Rewards & Loyalty System - Modul 2 (Reward Processing)",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
-    "license": "MIT",
     "require": {
         "php": "^8.1",
         "guzzlehttp/guzzle": "^7.2",

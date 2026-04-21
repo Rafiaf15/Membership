@@ -2,8 +2,12 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\User;
+use App\Models\PointRule;
+use App\Models\PointBalance;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,6 +17,10 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
+            UserSeeder::class,
+            PointRuleSeeder::class,
+            ReferralSeeder::class,
+            PointLogSeeder::class,
             ActivityRuleSeeder::class,
             MembershipTierSeeder::class,
             RewardSeeder::class,
