@@ -21,3 +21,4 @@ Thumbs.db
 docker-compose.override.yml
 storage/logs/*
 .env.local
+storage/framework/cache/data/
